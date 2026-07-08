@@ -1,0 +1,19 @@
+Similar rules exist for Linux (auditd + HID events) and macOS.
+5. Open-Source / Kernel-Level Approaches
+•  Linux Kernel HID Detection Modules (e.g., hid-omg-detect) — Check keystroke timing entropy, plug-and-type behavior, and known bad VID/PIDs.
+•  USBlock / Heuristic Tools — Block devices with inter-keystroke delays < ~80ms.
+•  Wazuh Active Response — Rules for USB HID events (e.g., rules 800140+ series).
+Recommendations for Your SOC Framework
+1.  Implement Correlation Rules — Always combine:
+	•  New HID device event
+	•  Rapid keystroke / GUI launcher (Win+R, etc.)
+	•  Shell execution within <10 seconds
+	•  Optional: File creation with your test tag
+2.  Tuning Tips:
+	•  Start in audit/detect mode to reduce FPs.
+	•  Whitelist known good keyboards or admin test machines.
+	•  Add jitter/randomization to your PoC to test robustness of timing-based rules.
+3.  Test These Detections:
+	•  Run your PoC on a monitored endpoint.
+	•  Check EDR consoles for alerts on device enumeration + command execution.
+	•  Verify the marker file triggers FIM (File Integrity Monitoring) rules.
