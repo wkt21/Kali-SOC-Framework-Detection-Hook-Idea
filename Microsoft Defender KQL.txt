@@ -1,0 +1,3 @@
+// HID Keyboard + Rapid Shell
+let MalPnP = MiscEvents | where ActionType == "PnpDeviceConnected" | extend p=parse_json(AdditionalFields) | where p.DeviceDescription == "HID Keyboard Device";
+ProcessCreationEvents | where ProcessCommandLine contains "powershell" or ProcessCommandLine startswith "cmd" | join MalPnP on ComputerName | where (EventTime - PluginTime) < 10s
