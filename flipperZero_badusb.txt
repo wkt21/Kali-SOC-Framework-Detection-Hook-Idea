@@ -1,0 +1,30 @@
+Flipper Zero BadUSB Capabilities (2026)
+The Flipper Zero is one of the most versatile tools for HID injection testing and is excellent for SOC/EDR validation exercises.
+Overview
+
+The Flipper Zero’s BadUSB feature allows it to emulate a USB keyboard (and mouse) and execute DuckyScript payloads. It combines hardware flexibility with an easy-to-use interface, making it ideal for purple teaming and detection tuning.
+Key Capabilities
+•  Full HID Emulation — Keyboard + Mouse support with DuckyScript compatibility.
+•  Multi-OS Launcher Support — Excellent for your PoC (Win+R, Spotlight, Ctrl+Alt+T).
+•  Payload Management — Store and run multiple .txt DuckyScript files from the SD card.
+•  Advanced Features:
+	•  VID/PID spoofing (change device identity).
+	•  Variable delays and jitter for evasion testing.
+	•  Keyboard layout files (US, DE, ES, etc.).
+	•  Combo attacks (BadUSB + Sub-GHz, NFC, IR).
+•  Ease of Use — GUI-based selection and execution — no computer required for running payloads.
+
+How to Use with This Framework
+1.  Copy your DuckyScript payload to /ext/badusb/ on the Flipper’s SD card.
+2.  Go to Bad USB → Select file → Run.
+3.  The Flipper emulates a keyboard and executes the script.
+Pro Tip: Use the Flipper’s built-in delay randomization to test behavioral detection robustness.
+
+Strengths for SOC Testing
+•  Highly realistic HID behavior for timing and correlation rule validation.
+•  Easy to create multiple payload variants (noisy vs. evasive).
+•  Combines well with other Flipper features for multi-vector testing.
+Limitations
+•  Slightly slower injection speed compared to dedicated Rubber Ducky hardware.
+•  No native Wi-Fi remote triggering (unlike O.MG Cable).
+Comparison
