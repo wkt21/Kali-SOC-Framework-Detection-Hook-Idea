@@ -1,0 +1,116 @@
+## Added: DuckyScript to Arduino Converter
+
+A practical Python tool that converts your DuckyScript payloads into ready-to-upload Arduino sketches using the standard `Keyboard.h` library.
+
+### Features
+- Supports core DuckyScript commands: `DELAY`, `STRING`, `GUI`, `ENTER`, `CTRL ALT`, etc.
+- Handles the OS-specific launcher blocks from your PoC.
+- Generates clean, commented Arduino code.
+- Works with **Arduino Leonardo**, **Pro Micro**, **ESP32-S2/S3**, and other HID-capable boards.
+
+### Converter Script (`ducky_to_arduino.py`)
+
+```python
+#!/usr/bin/env python3
+"""
+DuckyScript to Arduino Converter
+Converts simple DuckyScript payloads to Arduino Keyboard.h sketches.
+"""
+
+import sys
+import re
+
+def parse_ducky(lines):
+    sketch = [
+        '#include <Keyboard.h>',
+        '',
+        'void setup() {',
+        '  Keyboard.begin();',
+        '  delay(1000);  // Wait for HID enumeration',
+        '  // === Payload Start ==='
+    ]
+    
+    for line in lines:
+        line = line.strip()
+        if not line or line.startswith('REM'):
+            continue
+            
+        # DELAY
+        if line.startswith('DELAY'):
+            delay = int(re.search(r'\d+', line).group())
+            sketch.append(f'  delay({delay});')
+        
+        # STRING
+        elif line.startswith('STRING'):
+            text = line[7:].strip().replace('"', '\\"')
+            sketch.append(f'  Keyboard.print("{text}");')
+        
+        # ENTER / RETURN
+        elif line in ['ENTER', 'RETURN']:
+            sketch.append('  Keyboard.press(KEY_RETURN);')
+            sketch.append('  Keyboard.releaseAll();')
+        
+        # GUI / WINDOWS
+        elif line.startswith('GUI') or line.startswith('WINDOWS'):
+            sketch.append('  Keyboard.press(KEY_LEFT_GUI);')
+            if len(line.split()) > 1:
+                key = line.split()[1].upper()
+                sketch.append(f'  Keyboard.press(KEY_{key});')
+                sketch.append('  Keyboard.releaseAll();')
+        
+        # CTRL ALT t (Linux example)
+        elif 'CTRL ALT' in line.upper():
+            sketch.append('  Keyboard.press(KEY_LEFT_CTRL);')
+            sketch.append('  Keyboard.press(KEY_LEFT_ALT);')
+            sketch.append('  Keyboard.press(\'t\');')
+            sketch.append('  Keyboard.releaseAll();')
+        
+        # Simple single keys
+        elif len(line) == 1:
+            sketch.append(f'  Keyboard.press(\'{line}\');')
+            sketch.append('  Keyboard.releaseAll();')
+    
+    sketch.extend([
+        '  // === Payload End ===',
+        '}',
+        '',
+        'void loop() {}'
+    ])
+    
+    return '\n'.join(sketch)
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: python ducky_to_arduino.py payload.txt [output.ino]")
+        sys.exit(1)
+    
+    with open(sys.argv[1], 'r') as f:
+        content = f.readlines()
+    
+    arduino_code = parse_ducky(content)
+    
+    output_file = sys.argv[2] if len(sys.argv) > 2 else "payload.ino"
+    with open(output_file, 'w') as f:
+        f.write(arduino_code)
+    
+    print(f"✅ Arduino sketch generated: {output_file}")
+    print("Upload to Leonardo, Pro Micro, or ESP32-S2/S3")
+---
+
+How to Use
+1.  Save your DuckyScript payload as payload.txt.
+2.  Run the converter:
+
+bash:
+python ducky_to_arduino.py payload.txt my_payload.ino
+
+---
+# 3.  Open my_payload.ino in the Arduino IDE.
+4.  Select a compatible board (e.g., Arduino Leonardo or SparkFun Pro Micro) and upload.
+Example Output
+The converter turns your native command PoC into a clean Arduino sketch that emulates the same behavior using direct HID calls.
+Next Steps / Enhancements
+•  Add support for Mouse.h (mouse movement, clicks).
+•  Improve DuckyScript 3.0 compatibility.
+•  Add keyboard layout options (US, ES, DE, etc.).
+This tool makes it easy to test your detection rules on cheap Arduino-based hardware in addition to commercial devices like Rubber Ducky or Flipper Zero.
