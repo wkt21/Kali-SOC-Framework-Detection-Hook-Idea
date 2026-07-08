@@ -1,0 +1,29 @@
+Quick Analysis
+1. USB Rubber Ducky (Still the Gold Standard for Basic Testing)
+•  Extremely reliable and fast keystroke injection.
+•  Your current PoC (native commands version) works perfectly on it.
+•  Huge payload library.
+•  Limitation: No wireless control — must be physically plugged in.
+
+2. O.MG Cable (Best for Stealth / Supply-Chain Scenarios)
+•  Looks like a normal charging cable (USB-C, Lightning, etc.).
+•  Wi-Fi enabled remote payload triggering and keylogging.
+•  Excellent for testing “someone plugged in a random cable” scenarios.
+•  Your PoC can be adapted easily (supports DuckyScript).
+3. Flipper Zero (Most Versatile for SOC Testing)
+
+•  Supports BadUSB mode with DuckyScript-compatible payloads.
+•  Great for testing detection of multiple attack vectors in one device.
+•  Widely used in purple team exercises.
+
+4. Budget / DIY Options
+•  Digispark or ESP32-S3 boards (LilyGo T-Dongle, etc.) + open-source firmware like USB Army Knife.
+•  Great for scaling your SOC framework testing cheaply.
+Recommendations for Your SOC CLI Framework
+•  Core Testing — Start with Rubber Ducky (reliable baseline).
+•  Stealth Testing — Add O.MG Cable variants.
+•  Broad Coverage — Include Flipper Zero BadUSB payloads.
+•  Detection Focus — Test variations:
+	•  Pure HID speed/timing.
+	•  Wi-Fi triggered (O.MG).
+	•  Multi-function (Bash Bunny / Flipper).
