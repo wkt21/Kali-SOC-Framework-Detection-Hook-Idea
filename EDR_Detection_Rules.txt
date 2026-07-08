@@ -1,0 +1,38 @@
+1. Core Detection Strategies (MITRE & General)
+This payload aligns with MITRE ATT&CK T1200 (Hardware Additions) and Input Injection techniques.
+Key detection approaches:
+•  HID Device Enumeration + Rapid Command Execution Correlation — Monitor new USB HID keyboard devices followed (within seconds) by shell launches (Win+R → PowerShell/cmd, Spotlight → Terminal, Ctrl+Alt+T → shell).
+•  Keystroke Timing Analysis — Machine-injected keystrokes show near-zero inter-key latency and unnatural regularity (vs. human typing entropy).
+•  Marker File Creation — Simple file creation monitoring in temp directories for your HID_INJECTION_POC_DETECTED tag.
+•  USB Descriptor / VID-PID Fingerprinting — Flag known suspicious devices (e.g., Rubber Ducky VID/PID pairs).
+2. Microsoft Defender for Endpoint (MDE) Specific Rules & Hunting Queries
+Recommended Advanced Hunting KQL Queries (from real-world examples):
+
+// HID Keyboard + Rapid Shell Execution (Core detection for your PoC)
+let MalPnPDevices =
+    MiscEvents
+    | where ActionType == "PnpDeviceConnected"
+    | extend parsed = parse_json(AdditionalFields)
+    | where parsed.DeviceDescription == "HID Keyboard Device"
+    | project PluginTime=EventTime, ComputerName, DeviceDescription=tostring(parsed.DeviceDescription);
+
+ProcessCreationEvents
+| where ProcessCommandLine contains "powershell" or ProcessCommandLine startswith "cmd"
+| project ProcessTime=EventTime, ComputerName, ProcessCommandLine
+| join kind=inner MalPnPDevices on ComputerName
+| where (ProcessTime - PluginTime) between (0s .. 10s)
+
+
+
+Additional useful queries:
+•  PnP Device events (PnpDeviceConnected) filtered for HID/Keyboard class.
+•  File creation in %TEMP% or /tmp/ containing your marker string.
+•  Process creation from explorer.exe or similar right after device plug-in.
+Device Control Policies in MDE:
+•  Block or audit new unauthorized HID devices.
+•  Use removable storage / device installation restrictions.
+3. CrowdStrike Falcon Detections
+Falcon excels at behavioral prevention here:
+•  Custom IOA (Indicators of Attack) — Create rules for rapid keystroke injection + shell spawning.
+•  PnP + Process Correlation — Similar to the MDE query above.
+•  Behavioral ML models often flag “unnatural” input patterns followed by suspicious commands (e.g., PowerShell from HID context).
