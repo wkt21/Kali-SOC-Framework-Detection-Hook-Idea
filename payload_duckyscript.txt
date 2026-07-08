@@ -1,0 +1,41 @@
+REM ################################################################
+REM PAYLOAD NAME: Benign HID Injection Detection PoC (Native Commands)
+REM PURPOSE: Trigger behavioral/HID-injection detection logic only.
+REM          Uses minimal native OS commands. No PowerShell.
+REM TARGETS: Windows 11, macOS, Debian Linux (Ubuntu/Kali)
+REM ################################################################
+
+DELAY 1000
+
+REM ----------------------------------------------------------------
+REM WINDOWS 11 - Native cmd.exe
+REM ----------------------------------------------------------------
+IF ($_OS == WINDOWS) THEN
+    GUI r
+    DELAY 400
+    STRING cmd /c echo HID_INJECTION_POC_DETECTED %DATE% %TIME% > "%TEMP%\hid_poc_marker.txt"
+    ENTER
+END_IF
+
+REM ----------------------------------------------------------------
+REM MACOS - Native echo
+REM ----------------------------------------------------------------
+IF ($_OS == OSX) THEN
+    GUI SPACE
+    DELAY 400
+    STRING Terminal
+    ENTER
+    DELAY 600
+    STRING echo "HID_INJECTION_POC_DETECTED $(date -u +%Y-%m-%dT%H:%M:%SZ)" > /tmp/hid_poc_marker.txt
+    ENTER
+END_IF
+
+REM ----------------------------------------------------------------
+REM DEBIAN LINUX - Native echo
+REM ----------------------------------------------------------------
+IF ($_OS == LINUX) THEN
+    CTRL ALT t
+    DELAY 600
+    STRING echo "HID_INJECTION_POC_DETECTED $(date -u +%Y-%m-%dT%H:%M:%SZ)" > /tmp/hid_poc_marker.txt
+    ENTER
+END_IF
