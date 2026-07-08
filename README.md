@@ -4,28 +4,30 @@ Test The Kali CLI Framework
 <img width="1536" height="1024" alt="IMG_1983" src="https://github.com/user-attachments/assets/a19d8d23-fa90-4d7c-92ca-5b133b82b0d7" />
 
 ---
-# Detection Hook Ideas
-•  Monitor for abnormally fast keystroke injection (near-zero inter-key latency).
-•  Correlate new HID device enumeration events with immediate Win+R / Spotlight / Ctrl+Alt+T usage.
-•  Watch for file creation in %TEMP% or /tmp/ containing the string HID_INJECTION_POC_DETECTED.
-•  Alert on rapid shell execution immediately following USB HID device activity.
-Usage
 
-1.  Load the payload onto your HID injection device (e.g., Hak5 Rubber Ducky, Flipper Zero, etc.).
-2.  Plug the device into a test system.
-3.  Verify the marker file was created:
-	•  Windows: %TEMP%\hid_poc_marker.txt
-	•  macOS / Linux: /tmp/hid_poc_marker.txt
-Compatibility Notes
-•  Timing delays may need slight adjustment on very slow or heavily restricted systems.
-•  Linux terminal shortcut (Ctrl+Alt+T) is optimized for GNOME-based desktops.
-•  macOS Spotlight method works on most modern versions.
+**A safe, benign HID Injection Proof of Concept for SOC, EDR, and HIDS testing.**
+
+This project simulates realistic Rubber Ducky / BadUSB-style keyboard injection attacks across Windows, macOS, and Linux — without any destructive, exfiltration, or persistence actions.
+
 ---
 
-# Safety & Legal
-This payload is intended only for authorized security testing on systems you own or have explicit permission to test. Always follow your organization’s red/purple team policies.
-Contributing
-Suggestions for additional OS variants, improved timing logic, randomized markers, or integration into larger testing frameworks are welcome.
----
+## Purpose
 
-# Made for SOC teams, purple teams, and detection engineers.
+- Trigger behavioral HID-injection detection logic in your security stack.
+- Help SOC teams tune and validate detection rules for keystroke injection attacks.
+- Provide a reliable, repeatable test case with a clear greppable marker.
+
+## Features
+
+- Cross-platform: **Windows 11**, **macOS**, **Debian Linux** (Ubuntu/Kali).
+- Uses only native OS commands (no PowerShell on Windows).
+- Includes DuckyScript → Arduino converter (DuckyScript 3.0 support).
+- Detailed detection rules and hunting queries.
+- Benign by design — creates one small timestamped marker file.
+
+## Installation & Usage
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/wkt21/Kali-SOC-Framework-Detection-Hook-Idea.git
+   cd Kali-SOC-Framework-Detection-Hook-Idea
