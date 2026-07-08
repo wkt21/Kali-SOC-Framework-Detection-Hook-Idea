@@ -1,6 +1,9 @@
 # Kali-SOC-Framework-Detection-Hook-Idea
 Test The Kali CLI Framework 
 ---
+<img width="1536" height="1024" alt="IMG_1983" src="https://github.com/user-attachments/assets/a19d8d23-fa90-4d7c-92ca-5b133b82b0d7" />
+
+---
 # Detection Hook Ideas
 •  Monitor for abnormally fast keystroke injection (near-zero inter-key latency).
 •  Correlate new HID device enumeration events with immediate Win+R / Spotlight / Ctrl+Alt+T usage.
