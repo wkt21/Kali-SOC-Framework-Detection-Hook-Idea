@@ -1,0 +1,15 @@
+title: Suspicious HID Keyboard Injection + Shell Execution
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_pnp:
+        EventID: 20001  # or relevant PnP events
+        DeviceDescription: "*HID*Keyboard*"
+    selection_shell:
+        Image|endswith: 
+            - "\\powershell.exe"
+            - "\\cmd.exe"
+        ParentImage|endswith: "\\explorer.exe"  # or similar
+    condition: selection_pnp and selection_shell | near (within 10s)
+level: high
